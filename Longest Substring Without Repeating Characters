@@ -1,0 +1,33 @@
+class Solution(object):
+    def lengthOfLongestSubstring(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        
+        dic_char_lastIndex = {}
+        longest_substr = ""
+        left_ix = 0
+        i=0
+        for i in range(len(s)):
+            if s[i] in dic_char_lastIndex.keys():
+                #last_index = dic_char_lastIndex[s[i]]
+                if len(longest_substr) < (i-left_ix):
+                    longest_substr = s[left_ix:i]
+                left_ix = dic_char_lastIndex[s[i]] + 1
+                for key in dic_char_lastIndex.keys():
+                    if dic_char_lastIndex[key] < left_ix:
+                        del dic_char_lastIndex[key]
+                dic_char_lastIndex[s[i]] = i
+                #if i == len(s)-1:
+                 #   print longest_substr
+                  #  return len(longest_substr)
+            else:
+                dic_char_lastIndex[s[i]] = i
+        
+        if len(longest_substr) < (i+1-left_ix):  #used i and not i+1
+            longest_substr = s[left_ix:i+1]
+            
+        print longest_substr
+        return len(longest_substr)
+            
