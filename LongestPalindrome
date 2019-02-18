@@ -1,0 +1,49 @@
+class Solution(object):
+    
+    
+    def longestPalindrome(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
+        
+        if len(s) < 2:
+            return s
+        
+        if len(s) == 2:
+            if s[0] == s[1]:
+                return s
+            else:
+                return s[0]
+        def check_on_center(s, center_i):
+            i = 1
+            while (center_i-i) >=0 and center_i+i < len(s):
+                if s[center_i-i] == s[center_i+i]:
+                    i += 1
+                else:
+                    break
+            i -= 1
+            return s[center_i-i : center_i+i+1]
+        
+        def check_on_centers(s, center_i, center_j):
+            i = 1
+            while (center_i-i) >=0 and center_j+i < len(s):
+                if s[center_i-i] == s[center_j+i]:
+                    i += 1
+                else:
+                    break
+            i -= 1
+            return s[center_i-i : center_j+i+1]
+        
+        longest_pal = s[0]
+        for i in range(len(s)):
+            pal = check_on_center(s, i)
+            if len(pal) > len(longest_pal):
+                longest_pal = pal
+            if i+1 < len(s) and s[i] == s[i+1]:
+                pal = check_on_centers(s, i, i+1)
+                if len(pal) > len(longest_pal):
+                    longest_pal = pal
+            
+        return longest_pal
+                
