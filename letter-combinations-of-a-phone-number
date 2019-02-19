@@ -1,0 +1,33 @@
+class Solution(object):
+    def letterCombinations(self, digits):
+        """
+        :type digits: str
+        :rtype: List[str]
+        """
+        if len(digits) < 1:
+            return []
+        
+        alphabet = []
+        for letter in range(97,123):
+            alphabet.append(chr(letter))
+        
+        dic = {2:alphabet[0:3]
+               , 3:alphabet[3:6]
+               , 4:alphabet[6:9]
+               , 5:alphabet[9:12]
+               , 6:alphabet[12:15]
+               , 7:alphabet[15:19]
+               , 8:alphabet[19:22]
+               , 9:alphabet[22:26]
+              }
+        
+        output = dic[int(digits[0])]
+        for digit in digits[1:]:
+            new_output = []
+            for ltr in dic[int(digit)]:
+                new_output = new_output + [outStr + ltr for outStr in output]
+            output = new_output
+        #output = sorted(output)
+        return output
+                
+                
