@@ -1,0 +1,98 @@
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    
+    def __init__(self):
+        self.worthlessNodes = []
+    
+    def getNodeHeirarchy(self, root, p, q):
+        print "--" + str(root.val) + "--"
+        if root.left:
+            if root.left == p or root.left == q:
+                return [(root, "left")]
+            else:
+                heirarchy = self.getNodeHeirarchy(root.left, p, q)
+                if heirarchy:
+                    heirarchy.append((root, "left"))
+                    print str(heirarchy)
+                    return heirarchy
+        
+        if root.right:
+            if root.right == p or root.right == q:
+                return [(root, "right")]
+            else:
+                heirarchy = self.getNodeHeirarchy(root.right, p, q)
+                if heirarchy:
+                    heirarchy.append((root, "right"))
+                    return heirarchy
+        
+        self.worthlessNodes.append(root)
+            
+        return None
+    
+    def hitTargetNode(self, root, target):
+        
+        if root.left:
+            if root.left == target:
+                return True
+            elif self.hitTargetNode(root.left, target):
+                return True
+        if root.right:
+            if root.right == target:
+                return True
+            elif self.hitTargetNode(root.right, target):
+                return True
+            
+        return False
+    
+    def lowestCommonAncestor(self, root, p, q):
+        """
+        :type root: TreeNode
+        :type p: TreeNode
+        :type q: TreeNode
+        :rtype: TreeNode
+        """
+        
+        
+        
+        if self.hitTargetNode(p, q):
+            print "p"
+            return p
+        
+        if self.hitTargetNode(q, p):
+            print "q"
+            return q
+        
+        heirarchy = self.getNodeHeirarchy(root, p, q)
+        
+        for node, direction in heirarchy:
+            print "~~" + str(node.val) + " " + direction
+            
+        
+        if heirarchy[0][1] == "left":
+            if heirarchy[0][0].left == p:
+                target = q
+            else:
+                target = p
+        else:
+            if heirarchy[0][0].right == p:
+                target = q
+            else:
+                target = p
+        print str(target.val)
+        for node, direction in heirarchy:
+            print str(node.val) + " " + direction
+            if direction == "left":
+                if node.right and (node.right == target or self.hitTargetNode(node.right, target)):
+                    return node
+            else:
+                if node.left and (node.left == target or self.hitTargetNode(node.left, target)):
+                    return node
+                
+        return None
+        
