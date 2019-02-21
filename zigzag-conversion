@@ -1,0 +1,45 @@
+class Solution(object):
+    def convert(self, s, numRows):
+        """
+        :type s: str
+        :type numRows: int
+        :rtype: str
+        """
+        
+        if numRows < 1:
+            return ""
+        if numRows == 1:
+            return s
+        
+        new_s = ""
+        
+        #first row
+        row = 0
+        i = row
+        jump = 2*(numRows-row-1)
+        while i < len(s):
+            new_s += s[i]
+            i += jump
+            
+        
+        for row in range(1,numRows-1):
+            i = row
+            jump1 = 2*(numRows-row-1)
+            jump2 = 2*row
+            jump = jump1
+            while i < len(s):
+                new_s += s[i]
+                i += jump
+                if jump == jump1:
+                    jump = jump2
+                else:
+                    jump = jump1
+        
+        #last row
+        i = numRows-1
+        jump = 2*(numRows-1)
+        while i < len(s):
+            new_s += s[i]
+            i += jump
+        
+        return new_s
