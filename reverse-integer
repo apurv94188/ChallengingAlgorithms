@@ -1,0 +1,31 @@
+class Solution(object):
+    def reverse(self, x):
+        """
+        :type x: int
+        :rtype: int
+        """
+        
+        if x > -10 and x < 10:
+            return x
+        
+        
+        
+        sign = -1 if x<0 else 1
+        x=abs(x)
+        
+        leastSigDigit = x%10
+        x = int(x/10)
+        rev_x = leastSigDigit
+        
+        while x>0:
+            leastSigDigit = x%10
+            x = int(x/10)
+            
+            rev_x = rev_x*10 + leastSigDigit
+        
+        rev_x *= sign
+        if rev_x > 2**31-1 or rev_x < -2**31:
+            return 0
+        
+        return rev_x
+
