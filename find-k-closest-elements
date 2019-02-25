@@ -1,0 +1,48 @@
+class Solution(object):
+    def findClosestElements(self, arr, k, x):
+        """
+        :type arr: List[int]
+        :type k: int
+        :type x: int
+        :rtype: List[int]
+        """
+        
+        if x <= arr[0]:
+            return arr[:k]
+        elif x >= arr[len(arr)-1]:
+            return arr[-k:]
+        
+        #else:
+        x_ix = -1
+        for i in range(len(arr)):
+            if arr[i] < x:
+                continue
+            else:
+                x_ix = i
+                break
+                
+        left,right = 0,0
+        if x_ix <= k:
+            print "kk"
+            left = 0
+            right = k-1
+        else:
+            print "jj"
+            left = x_ix-k
+            right = x_ix-1
+        
+        print str(x_ix) + " " + str(left), " ", str(arr[left]), " ", str(right), " ", str(arr[right])
+        
+        leftmost_diff = x - arr[left]
+        for i in range(right+1,len(arr)):
+            diff = arr[i] - x
+            if diff >= leftmost_diff:
+                break
+            else:
+                right += 1
+                left += 1
+                leftmost_diff = x - arr[left]
+                print str(left), " ", str(arr[left]), " ", str(right), " ", str(arr[right])
+                
+        print str(left), " ", str(arr[left]), " ", str(right), " ", str(arr[right])
+        return arr[left:right+1]
