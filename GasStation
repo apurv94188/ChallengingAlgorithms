@@ -1,0 +1,30 @@
+class Solution {
+public:
+    int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
+        for (int i=0; i<gas.size(); ++ i)
+            gas[i] -= cost[i];
+        
+        int lastPositiveBandIndex=0;
+        int bandSum=0;
+        for (int i=0; i<gas.size(); ++i) {
+            if (bandSum + gas[i] < 0) {
+                lastPositiveBandIndex = i+1;
+                bandSum = 0;
+                continue;
+            }
+            
+            bandSum += gas[i];
+        } // for loop band Sum
+        
+        if (lastPositiveBandIndex == gas.size())
+            return -1;
+        
+        for (int i=0; i<lastPositiveBandIndex; ++i) {
+            if (bandSum+gas[i] < 0)
+                return -1;
+            bandSum += gas[i];
+        }
+        
+        return lastPositiveBandIndex;
+    } // function
+};
