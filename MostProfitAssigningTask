@@ -1,0 +1,64 @@
+class Solution {
+public:
+    
+    template <typename T>
+    void print(const vector<T>& vc) {
+        for (T e : vc) {
+            cout << e << " ";
+        }
+    }
+    
+    void mySort(vector<int>& profit, vector<int>& difficulty) {
+        
+        // customized binary insertion reverse sort
+        int h,mid,l,temp;
+        for (int i=1; i<profit.size(); ++i) {
+            
+            // find position for ele
+            l=0; h=i-1; 
+            do {
+                
+                mid = l+(h-l)/2;
+                if (profit.at(mid) >= profit.at(i)) {
+                    l=mid+1;
+                    mid += 1;
+                }
+                else{
+                    h=mid-1;
+                }
+            } while (l<=h); // while
+            //cout << "mid: " << mid << " || ";
+            temp = profit.at(i);
+            profit.erase (profit.begin()+i);
+            profit.insert (profit.begin()+mid, temp);
+            
+            temp = difficulty[i];
+            difficulty.erase (difficulty.begin()+i);
+            difficulty.insert (difficulty.begin()+mid, temp);
+            
+        } // for n
+        
+    } //func
+    
+    int maxProfitAssignment(vector<int>& difficulty, vector<int>& profit, vector<int>& worker) {
+        
+        // sort
+        this->mySort( profit, difficulty);
+        
+        std::sort(worker.begin(), worker.end());
+        std::reverse(worker.begin(), worker.end());
+        cout<<endl;print(profit);cout<<endl;print(difficulty);cout<<endl;print(worker);
+        int totalProfit=0, highEnd=0;
+        for (auto wrk : worker) {
+            for (int i=highEnd; i<profit.size(); ++i) {
+                if (difficulty[i] <= wrk) {
+                    totalProfit += profit[i];
+                    highEnd = i;
+                    break;
+                }
+            } // for difficulty
+        }// for worker iterator
+        
+        return totalProfit;
+    } // func
+};
