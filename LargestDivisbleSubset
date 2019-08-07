@@ -1,0 +1,74 @@
+
+class Solution {
+public:
+    
+    map<int,vector<int>> m_mapNN;  // key-biggest, val-Nlist
+    
+    template <typename eleType>
+    void print(vector<eleType> vec, string sep=" ") {
+        for(eleType ele : vec)
+            cout << sep << ele << sep;
+    }
+    
+    void print(int key, string postPrint="\n", string prePrint="\n", string sep=" => ") {
+        std::cout << prePrint << m_mapNN.find(key)->first << sep;print(m_mapNN.find(key)->second);cout << postPrint;
+    }
+    
+    template <typename keyType, typename valueType>
+    void print(map<keyType,valueType> mapNN, string prePrint="\n", string postPrint="\n", string sep="\n") {
+        cout << prePrint;
+        for (auto mapEle : mapNN)
+            print(mapEle.first,"");
+        
+        cout << postPrint;
+    }
+    
+    vector<int> largestDivisibleSubset(vector<int>& nums) {
+        
+        if (nums.size() <= 1)
+            return nums;
+        
+        this->m_mapNN.insert(pair<int,vector<int>>(nums.at(0), {nums.at(0)}));
+        bool createMapEle;
+        std::sort(nums.begin(), nums.end());
+        vector<int> maxSizeSet=m_mapNN.find(nums.at(0))->second;
+        int i;vector<int> second;map<int,vector<int>>::iterator mapEle;
+        pair<int,vector<int>> addPair;
+        
+        for (vector<int>::iterator ele=nums.begin()+1; ele!=nums.end(); ++ele) {
+            createMapEle = true;
+            size_t mapLen = this->m_mapNN.size();
+            i=0;
+            mapEle = m_mapNN.begin();
+            while (i++<mapLen) {
+                if (*ele % mapEle->first == 0) {
+                    //cout << "CurrentKey" << mapEle->first << "\n";
+                    if (m_mapNN.find(*ele) != m_mapNN.end()) {
+                        second = mapEle->second;
+                        second.push_back(*ele);
+                        m_mapNN.find(*ele)->second = second;
+                        if (maxSizeSet.size() < second.size())
+                            maxSizeSet = second;
+                        }
+                    else {
+                        addPair.first = *ele;
+                        addPair.second = mapEle->second;
+                        addPair.second.push_back(*ele);
+                        m_mapNN.insert(addPair);
+                        createMapEle = false;
+                        if (maxSizeSet.size() < addPair.second.size())
+                            maxSizeSet = addPair.second;
+                    }
+                }
+                ++mapEle;
+            } // for mepEle
+            
+            if (createMapEle) {
+                this->m_mapNN.insert(pair<int,vector<int>>(*ele, {*ele}));
+            }
+            //print(m_mapNN);
+        } // for ele
+        
+        return maxSizeSet;
+    } // func main
+};
