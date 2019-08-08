@@ -1,0 +1,40 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    
+    vector<TreeNode*> GetST(int low, int high) {
+        
+        vector<TreeNode*> STList;
+        
+        for (int root=low; root<=high; ++root) {
+            vector<TreeNode*> leftSTList = {nullptr}, rightSTList = {nullptr};
+            if (root-1 >= low)
+                leftSTList = GetST(low,root-1);
+            if (root+1 <= high)
+                rightSTList = GetST(root+1, high);
+            for (TreeNode* leftST : leftSTList) {
+                for (TreeNode* rightST : rightSTList) {
+                    TreeNode* rootNode = new TreeNode(root);
+                    rootNode->left = leftST;
+                    rootNode->right = rightST;
+                    STList.push_back(rootNode);
+                }// right
+            } // left
+        } // for root
+        return STList;
+    } // func GetST
+    
+    vector<TreeNode*> generateTrees(int n) {
+        if (n<1)
+            return {};
+        return GetST(1,n);
+    }
+};
