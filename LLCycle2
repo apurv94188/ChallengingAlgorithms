@@ -1,0 +1,45 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode *detectCycle(ListNode *head) {
+        
+        if (head==nullptr)
+            return NULL;
+        
+        ListNode *jump1 = head;
+        ListNode *jump2 = head;
+        jump2 = jump2->next;
+        if (jump2==nullptr)
+            return jump2;
+        
+        while(jump1 != jump2){
+            jump1 = jump1->next;
+            jump2 = jump2->next;
+            if (jump2 == nullptr)
+                return NULL;
+            jump2 = jump2->next;
+            if (jump2 == nullptr)
+                return NULL;
+        }
+        
+        if (head == jump2)
+            return head;
+        // jump1 and jump2 same node
+        jump2 = jump2->next;
+        
+        while (head != jump2) {
+            head = head->next;
+            jump2 = jump2->next;
+        }
+        
+        return head;
+        
+    } // func
+};
