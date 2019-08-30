@@ -1,0 +1,51 @@
+class Solution {
+public:
+    map<char,int> m_mapS1CharIx;
+    
+    
+    
+    bool checkInclusion(string s1, string s2) {
+        
+        if (s1.length() == 0 || s2.length() == 0)
+            return false;
+        if (s1.length() > s2.length())
+            return false;
+        
+        for (char c : s1) {
+            if (m_mapS1CharIx.find(c) != m_mapS1CharIx.end())
+                m_mapS1CharIx.find(c)->second += 1;
+            else
+                m_mapS1CharIx.insert(pair<int,int>(c, 1));
+        }
+        int lastix=0;
+        map<char,int>mapS1CharIx;
+        mapS1CharIx = m_mapS1CharIx;
+        map<char,int>::iterator itr;
+        int i=-1;
+        while (++i<s2.length()) {
+            itr = mapS1CharIx.find(s2[i]);
+            if (itr != mapS1CharIx.end()) {
+                if (itr->second == 0) {
+                    if (s2[i] != s2[lastix]){
+                        --i;
+                        mapS1CharIx.find(s2[lastix])->second += 1;
+                    }
+                    ++lastix;
+                    continue;
+                }
+                else
+                {
+                    itr->second -= 1;
+                    if (i-lastix+1 == s1.length())
+                        return true;
+                }
+            }
+            else {
+                mapS1CharIx = m_mapS1CharIx;
+                lastix = i+1;
+            }
+            
+        } // for
+        return false;
+    } // func
+};
