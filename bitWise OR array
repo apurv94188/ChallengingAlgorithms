@@ -1,0 +1,23 @@
+class Solution {
+public:
+    int subarrayBitwiseORs(vector<int>& A) {
+        
+        unordered_set<int> setBitOR;
+        unordered_set<int> lastRoundOR;
+        unordered_set<int> currentOR;
+        int iOR;
+        for (auto a : A) {
+            for (auto lre : lastRoundOR) {
+                iOR = lre | a;
+                currentOR.insert(iOR);
+            }
+            currentOR.insert(a);
+            setBitOR.insert(currentOR.begin(), currentOR.end());
+            lastRoundOR = currentOR;
+            currentOR.clear();
+        } //for a
+        
+                
+        return setBitOR.size();
+    } // func
+};
