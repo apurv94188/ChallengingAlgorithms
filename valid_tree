@@ -1,0 +1,65 @@
+class Solution {
+public:
+    
+    map<int,vector<int>> *m_mapSetEles;  // Key:Set_no, val:list of eles
+    map<int,int> *m_mapEleSet;  // Key:Element_no val:respective set_no
+    Solution () {
+        m_mapSetEles = new map<int,vector<int>>();
+        m_mapEleSet = new map<int,int>();
+    }
+    ~Solution () {
+        delete m_mapSetEles;
+        delete m_mapEleSet;
+    }
+    
+    void merge2sets(int bigSet, int smallSet) {
+        
+        // update node of small set to big set
+        for (auto node : m_mapSetEles->find(smallSet)->second)
+            m_mapEleSet->find(node)->second = bigSet;
+        
+        m_mapSetEles->find(bigSet)->second.insert(m_mapSetEles->find(bigSet)->second.end(), m_mapSetEles->find(smallSet)->second.begin(), m_mapSetEles->find(smallSet)->second.end());
+        
+        // remove smaller set
+        m_mapSetEles->erase(smallSet);
+    }
+    
+    bool validTree(int n, vector<vector<int>>& edges) {
+        
+        if (n==0)
+            return false;
+        if (n==1)
+            return true;
+        
+        // fill both the maps
+        while (--n >= 0) {
+            m_mapEleSet->insert(pair<int,int>(n,n));
+            m_mapSetEles->insert(pair<int,vector<int>>(n,{n}));
+        }
+        
+        int setA, setB, setAsize, setBsize;
+        for (auto edge : edges) {
+            
+            setA = m_mapEleSet->find(edge[0])->second;
+            setB = m_mapEleSet->find(edge[1])->second;
+            
+            //check cycle - if both belongs to same set
+            if (setA == setB)
+                return false;
+            
+            /* merge 2 sets */
+            setAsize = m_mapSetEles->find(setA)->second.size();
+            setBsize = m_mapSetEles->find(setB)->second.size();
+            if (setAsize >= setBsize)
+                merge2sets(setA, setB); // merge B into A
+            else
+                merge2sets(setB, setA); // merge A into B
+            
+        } // for edge
+        
+        if (m_mapSetEles->size() > 1)
+            return false;
+        
+        return true;
+    } // func 
+};
