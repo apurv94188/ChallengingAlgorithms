@@ -1,0 +1,73 @@
+/* NO DFS or BFS method */
+
+class Solution {
+    
+private:
+    class CCourse {
+        public:
+        int m_iNum;
+        int m_iPrerequisiteCount=0;
+        set<CCourse*> m_vecDependentCourses;  // dependent courses
+        
+        //connstrutor
+        CCourse(int val) : m_iNum(val) {}
+        
+    };
+    
+    
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        
+        unordered_set<CCourse*> zeroSet; // courses which don't have prerequisites
+        int totalCourses=0;
+        CCourse* c1=nullptr;CCourse* c2=nullptr;
+        unordered_map<int, CCourse*> mapCourses;
+        
+        for (auto prereq : prerequisites) {
+            if (mapCourses.find(prereq[0]) == mapCourses.end()) {
+                c1 = new CCourse(prereq[0]);
+                mapCourses.insert(pair<int,CCourse*>(prereq[0],c1));
+                ++totalCourses;
+            }
+            else
+                c1=mapCourses.find(prereq[0])->second;
+            
+            if (mapCourses.find(prereq[1]) == mapCourses.end()) {
+                c2 = new CCourse(prereq[1]);
+                mapCourses.insert(pair<int,CCourse*>(prereq[1],c2));
+                zeroSet.insert(c2);
+                ++totalCourses;
+            }
+            else
+                c2=mapCourses.find(prereq[1])->second;
+            
+            c2->m_vecDependentCourses.insert(c1); // make c1 dependent of c2
+            c1->m_iPrerequisiteCount += 1;
+            
+            if (zeroSet.find(c1) != zeroSet.end())
+                zeroSet.erase(c1);
+        } // for prereq
+        
+        // delete courses which have no prerequisites
+        while (zeroSet.size() != 0) {
+            CCourse* course = (*zeroSet.begin());
+            
+            // decrease the prerequisites count by 1 for courses which have
+            // this course as prerequistes... as this course node is deleted
+            for (auto c : course->m_vecDependentCourses) {
+                c->m_iPrerequisiteCount -= 1;
+                if (c->m_iPrerequisiteCount ==0)
+                    zeroSet.insert(c);  // if no more prereq then add to zero set
+            }
+            zeroSet.erase(course);
+            delete course;
+            --totalCourses;
+        }
+        
+        // check if we could delete all courses
+        if (totalCourses==0)
+            return true;
+        
+        return false;
+    } // func
+};
