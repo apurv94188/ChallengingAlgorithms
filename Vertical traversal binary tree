@@ -1,0 +1,79 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    
+    class CBFSNode {
+        public:
+        int m_x, m_y;
+        TreeNode* m_node;
+        CBFSNode(TreeNode* node, int x, int y) : m_node(node), m_x(x), m_y(y){}
+    };
+    
+    map<int, vector<CBFSNode*>> m_mapResult;
+    std::queue<CBFSNode*> m_qBFS;
+    
+    //inline addToResultVec()
+    
+    void process_node(CBFSNode* node) {
+        
+        // add node to respective vertical vector
+        vector<CBFSNode*> vertArr;
+        if (m_mapResult.find(node->m_x) == m_mapResult.end()) {
+            vertArr = {node};
+            m_mapResult.insert(pair<int,vector<CBFSNode*>>(node->m_x, vertArr));
+        }
+        else {
+            vertArr = m_mapResult.find(node->m_x)->second;
+            int i;
+            for (i=vertArr.size()-1; i>=0; --i) {
+                auto itr = vertArr.begin()+i;
+                if ((*itr)->m_y != node->m_y || (*itr)->m_node->val <= node->m_node->val) {
+                    vertArr.insert(vertArr.begin()+(i+1),node);
+                    m_mapResult.find(node->m_x)->second = vertArr;
+                    break;
+                }
+            } // for
+            if (i==-1) {
+                vertArr.insert(vertArr.begin(),node);
+                m_mapResult.find(node->m_x)->second = vertArr;
+            }
+        } // else
+        
+        // add children to queue
+        if (node->m_node->left) {
+            CBFSNode* leftNode = new CBFSNode(node->m_node->left, node->m_x-1, node->m_y+1);
+            m_qBFS.push(leftNode);
+        }
+        if (node->m_node->right) {
+            CBFSNode* rightNode = new CBFSNode(node->m_node->right, node->m_x+1, node->m_y+1);
+            m_qBFS.push(rightNode);
+        }    
+    } // func process_node
+    
+    vector<vector<int>> verticalTraversal(TreeNode* root) {
+        // implementing BFS
+        CBFSNode* rootNode = new CBFSNode(root,0,0);
+        m_qBFS.push(rootNode);
+        while (!m_qBFS.empty()) {
+            process_node(m_qBFS.front());
+            m_qBFS.pop();
+        }
+        vector<vector<int>> result;
+        for (auto pairr : m_mapResult) {
+            vector<int> arr;
+            for (auto bfsNode : pairr.second)
+                arr.push_back(bfsNode->m_node->val);
+            result.push_back(arr);
+        }
+        
+        return result;
+    }
+};
