@@ -1,0 +1,43 @@
+class Codec {
+public:
+
+    inline string getIntToStr(int val) {
+        string len = to_string(val);
+        for (int i=len.size(); i<to_string(INT_MAX).size(); ++i)
+            len = "0" + len;
+        
+        return len;
+    }
+    
+    // Encodes a list of strings to a single string.
+    string encode(vector<string>& strs) {
+        string encodedStr = "";//getIntToStr(strs.size());
+        
+        for (string str : strs) {
+            // add length of string as suffix before the string - this length size will be of length to_string(INT_MAX).size()
+            encodedStr += getIntToStr(str.size());
+            encodedStr += str;
+        }
+        
+        return encodedStr;
+    }
+
+    // Decodes a single string to a list of strings.
+    vector<string> decode(string s) {
+        int intPartSize = to_string(INT_MAX).size();
+        vector<string> decodedStr;
+        int i=0;
+        while (i<s.size()) {
+            int strLen = stoi(s.substr(i,intPartSize));
+            i += intPartSize;
+            decodedStr.push_back(s.substr(i,strLen));
+            i += strLen;
+        }
+        
+        return decodedStr;
+    }
+};
+
+// Your Codec object will be instantiated and called as such:
+// Codec codec;
+// codec.decode(codec.encode(strs));
