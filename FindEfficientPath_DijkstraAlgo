@@ -1,0 +1,62 @@
+typedef pair<int,int> loc;
+class Solution {
+public:
+    
+    map<int,set<loc>> bndryVrtx;
+    loc lastCell;
+    set<loc> deletedCell;
+    
+    inline void insertLoc(int cellVal, loc cell) {
+        
+        if (bndryVrtx.find(cellVal) != bndryVrtx.end())
+            bndryVrtx.find(cellVal)->second.insert(cell);
+        else
+            bndryVrtx.insert(pair<int,set<loc>>(cellVal,{cell}));
+    }
+    
+    inline bool validCell(loc cell) {
+        if (deletedCell.find(cell) != deletedCell.end())
+            return false;
+        
+        if (cell.first < 0 || cell.second < 0 || cell.first > lastCell.first || cell.second > lastCell.second)
+            return false;
+        return true;
+    }
+    
+    int maximumMinimumPath(vector<vector<int>>& A) {
+        
+        bndryVrtx = {pair<int,set<loc>>(A[0][0], {{0,0}})};
+        lastCell = {A.size()-1, A[0].size()-1};
+        
+        while (true) {
+            int maxValCell = bndryVrtx.rbegin()->first;
+            loc cellLoc = *(bndryVrtx.rbegin()->second.begin());
+            //cout << bndryVrtx.size() << " " << cellLoc.first << "," << cellLoc.second << endl;
+            if (bndryVrtx.rbegin()->second.size() == 1)
+                bndryVrtx.erase(maxValCell);
+            else
+                bndryVrtx.rbegin()->second.erase(bndryVrtx.rbegin()->second.begin());
+            deletedCell.insert(cellLoc);
+            
+            if (cellLoc == lastCell)
+                return maxValCell;
+            //cout << deletedCell.size() << endl;
+            loc upLoc = {cellLoc.first-1, cellLoc.second};
+            loc downLoc = {cellLoc.first+1, cellLoc.second};
+            loc rightLoc = {cellLoc.first, cellLoc.second+1};
+            loc leftLoc = {cellLoc.first, cellLoc.second-1};
+            
+            if (validCell(upLoc))
+                insertLoc(min(A[upLoc.first][upLoc.second],maxValCell), upLoc);
+            if (validCell(downLoc))
+                insertLoc(min(A[downLoc.first][downLoc.second],maxValCell), downLoc);
+            if (validCell(rightLoc))
+                insertLoc(min(A[rightLoc.first][rightLoc.second],maxValCell), rightLoc);
+            if (validCell(leftLoc))
+                insertLoc(min(A[leftLoc.first][leftLoc.second],maxValCell), leftLoc);
+            
+        } // while true
+    } // func
+    
+    
+};
