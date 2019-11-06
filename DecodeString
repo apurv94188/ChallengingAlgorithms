@@ -1,0 +1,31 @@
+class Solution {
+public:
+    
+    unordered_map<int,int> m_ixCount; // ix:end - count
+    
+    int numDecodings(string s) {
+        
+        if (s.size()>0 && s[0]-'0'==0)
+            return 0;
+        
+        if (s.size()==1 || s.size()==0)
+            return 1;
+        
+        if(m_ixCount.find(s.size()) != m_ixCount.end())
+            return m_ixCount.find(s.size())->second;
+        
+        // s.size >= 2
+        int count=0;
+        if ((s[0]-'0'==1 && s[1]-'0'!=0) || (s[0]-'0'==2 && s[1]-'0'<7))
+            count = numDecodings(s.substr(1)) + numDecodings(s.substr(2));
+        else if (s[0]-'0' >= 2)
+            count = numDecodings(s.substr(1));
+        else
+            count = numDecodings(s.substr(2));
+        
+        m_ixCount.insert(pair<int,int>(s.size(),count));
+        
+        return count;
+        
+    }
+};
