@@ -1,0 +1,66 @@
+/*
+iterate over each node in-order using queue
+create a map of childval:Node if the node doesn't get deleted
+add node to the res vector if node is not deleted and it's parent is deleted or not there (root)
+*/
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<TreeNode*> delNodes(TreeNode* root, vector<int>& to_delete) {
+        
+        if(root==NULL)
+            return {};
+        if (to_delete.size() ==0)
+            return {root};
+        
+        vector<TreeNode*> res;
+        queue<TreeNode*> nodeq;
+        unordered_map<int,TreeNode*> childNode;
+        nodeq.push(root);
+        sort(to_delete.begin(), to_delete.end());
+        
+        while(!nodeq.empty()) {
+            TreeNode* node = nodeq.front();
+            //cout << node->val << endl;
+            nodeq.pop();
+            bool del = find(to_delete.begin(), to_delete.end(), node->val) != to_delete.end() ? true : false;
+            if (node->left) {
+                nodeq.push(node->left);
+                if (!del)
+                    childNode.insert({node->left->val, node});
+            }
+            if (node->right) {
+                nodeq.push(node->right);
+                if (!del)
+                    childNode.insert({node->right->val, node});
+            }
+            
+            if (del){
+                auto parent = childNode.find(node->val);
+                if (parent != childNode.end()) {
+                    if (parent->second->left == node)
+                        parent->second->left = NULL;
+                    else
+                        parent->second->right = NULL;
+                }
+                //delete(node);
+            }
+            else {
+                auto parent = childNode.find(node->val);
+                if (parent == childNode.end())
+                    res.push_back(node);
+            }
+        }
+        //cout << " l " << res.size();
+        return res;
+    }
+};
