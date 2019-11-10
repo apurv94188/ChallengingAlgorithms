@@ -1,0 +1,59 @@
+typedef pair<int,int> ix_snapid;
+
+struct paircmpr{
+    bool operator() (const ix_snapid& a, const ix_snapid& b) const {
+        if (a.first == b.first)
+            return a.second < b.second;
+        else
+            return a.first < b.first;
+    }
+};
+
+class SnapshotArray {
+private:
+    map<ix_snapid,int, paircmpr> *arr = nullptr;
+    int curSnapid;
+public:
+    
+    SnapshotArray(int length) {
+        
+        arr = new map<ix_snapid,int, paircmpr>();
+        curSnapid=0;
+    }
+    
+    void set(int index, int val) {
+        ix_snapid key = {index,curSnapid};
+        auto ele = arr->find(key);
+        
+        if (ele==arr->end())
+            arr->insert({key,val});
+        else
+            ele->second = val;
+        //cout<<curSnapid << " " <<arr->find(index)->second.find(curSnapid)->second<<endl;
+    }
+    
+    int snap() {
+        return curSnapid++;
+    }
+    
+    int get(int index, int snap_id) {
+        //cout<<"--\n"<<curSnapid << " " <<arr->find(index)->second.find(snap_id)->second<<endl;
+        ix_snapid key = {index,snap_id};
+        
+        do {
+            auto ele = arr->find(key);
+            if (ele != arr->end())
+                return ele->second;
+            key.second -= 1;
+        }while (key.second >= 0);
+        return 0;
+    }
+};
+
+/**
+ * Your SnapshotArray object will be instantiated and called as such:
+ * SnapshotArray* obj = new SnapshotArray(length);
+ * obj->set(index,val);
+ * int param_2 = obj->snap();
+ * int param_3 = obj->get(index,snap_id);
+ */
