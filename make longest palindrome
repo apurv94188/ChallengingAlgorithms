@@ -1,0 +1,41 @@
+#include<unordered_map>
+#include<stdio.h>
+#include<iostream>
+#include <string>
+#include <vector>
+#include <bits/stdc++.h>
+using namespace std;
+
+#define WORD_COUNT 26
+
+int main() {
+
+    string str = "jnvjsdnvsde";
+    int alphas[WORD_COUNT];
+    memset(alphas,0,sizeof(alphas));
+    
+    for (auto c : str)
+        alphas[c-'a'] += 1;
+    
+    int i=0;
+    char oddch = '\0';
+    for (int ic=0; ic<WORD_COUNT; ++ic) {
+        if (alphas==0)
+            continue;
+        else if (alphas[ic]%2==0)
+            for(int k=0; k<alphas[ic]/2; ++k)
+                str[i++] = (char) (ic+'a');
+        else if (oddch == '\0')
+            oddch = (char) (ic+'a');
+    }
+    
+    int j=i;
+    if (oddch){
+        str[i] = oddch;
+        j++;
+    }
+    
+    while (--i >=0)
+        str[j++] = str[i];
+    cout << "palindrome " << str.substr(0,j) << endl;
+    return 0;
