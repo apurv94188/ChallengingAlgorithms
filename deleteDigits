@@ -1,0 +1,33 @@
+class Solution {
+public:
+    
+    string removeKdigits(string num, int k) {
+        
+        if (k==num.size())
+            return "0";
+        
+        int frw=1,bck=0,rep=1;
+        while (k>0 && frw < num.size()) {
+            if (bck > 0 && num[bck-1] > num[bck]) {
+                num[bck-1] = num[bck];
+                --bck;--k;
+            }
+            else if (num[bck] <= num[frw]){
+                if (bck+1 < frw)
+                    num[bck+1] = num[frw];
+                ++frw;++bck;
+            }
+            else {
+                // num[bck] > num[frw]
+                num[bck] = num[frw];
+                ++frw;--k;
+            }
+        } // while
+        cout << num << " " << bck << " " << frw << endl;
+        num = num.substr(0,bck+1) + num.substr(frw,num.size()-frw);
+        int j=0;
+        while(j<num.size() && num[j] == '0') ++j;
+        num = num.substr(j);
+        return num;
+    }
+};
