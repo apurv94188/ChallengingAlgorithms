@@ -1,0 +1,105 @@
+class CTrie {
+    
+    bool m_isend = false;
+    map<char,CTrie*> m_map_nextChar;
+    
+    public:
+    static vector<CTrie*> m_map_CharTrie;
+    char m_char;
+    CTrie(int rep_char) : m_char(rep_char) {}
+    
+    void mark_end() {m_isend = true;}
+    bool isend() {return m_isend;}
+    CTrie* getNext(char c) {
+        if (m_map_nextChar.find(c) == m_map_nextChar.end())
+            return NULL;
+        return m_map_nextChar[c];
+    }
+    
+    CTrie* addNext(char c) {
+        if (m_map_nextChar.find(c) == m_map_nextChar.end())
+            m_map_nextChar.insert({c,new CTrie(c)});
+        return m_map_nextChar[c];
+    }
+    
+    void addSubstring(string s) {
+        CTrie* next = getNext(s[0]);
+        if (next == NULL)
+            next = addNext(s[0]);
+        if (s.size() > 1)
+            next->addSubstring(s.substr(1));
+        else
+            next->mark_end();
+    }
+    
+};
+
+vector<CTrie*> CTrie::m_map_CharTrie(26,NULL);
+
+class Solution {
+public:
+    
+    
+
+    vector<string> wordBreak(CTrie* T, string s, string new_s) {
+        //cout << "\n--\n";
+        int i=0;
+        vector<string> completed_word;
+        
+        do {
+            new_s += T->m_char;
+            //cout << new_s << " ";
+            if (T->isend()) {
+                //cout << "-end-"<<s.size()<<"-"<<i<<"-"<<s[i+1]<<"-";
+                if ((s.size() > i+1) && (CTrie::m_map_CharTrie[s[i+1]-'a'] != NULL)) {
+                    vector<string> output = wordBreak(CTrie::m_map_CharTrie[s[i+1]-'a'], s.substr(i+1), new_s+" ");
+                    //cout << "\nback "<<new_s;
+                    if (output.size()){
+                        completed_word.insert(completed_word.begin(), output.begin(), output.end());
+                       // cout << " completed "<< completed_word[0];
+                    }
+                    //cout <<endl;
+                }
+                else if (s.size() == i+1) {
+                    completed_word.push_back(new_s);
+                    return completed_word;
+                }
+                
+            }
+            else if(s.size() <= i+1){
+                // don't include current word
+                return completed_word;
+            }
+            
+            T = T->getNext(s[++i]);
+            
+        }while (T);
+        
+        return completed_word;
+    }
+    
+    vector<string> wordBreak(string s, vector<string>& wordDict) {
+        //cout << s << endl;
+        CTrie::m_map_CharTrie.resize(26,NULL);
+        for (string word : wordDict) {
+            //cout << word << " ";
+            if (CTrie::m_map_CharTrie[word[0]-'a'] == NULL)
+                CTrie::m_map_CharTrie[word[0]-'a'] = new CTrie(word[0]);
+            if (word.size() == 1)
+                CTrie::m_map_CharTrie[word[0]-'a']->mark_end();
+            else
+                CTrie::m_map_CharTrie[word[0]-'a']->addSubstring(word.substr(1));
+        }
+        /*cout<<"\n";
+        for (int i=0; i<26; ++i) {
+            if (CTrie::m_map_CharTrie[i] != NULL)
+                cout << char(i+'a') << " available" <<endl;
+        }*/
+        
+        if (CTrie::m_map_CharTrie[s[0]-'a'] == NULL)
+            return {};
+        else
+            return wordBreak(CTrie::m_map_CharTrie[s[0]-'a'], s, "");
+        
+    }
+};
