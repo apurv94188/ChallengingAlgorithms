@@ -1,0 +1,49 @@
+class CCourse {
+    
+    public:
+    unordered_set<CCourse*> prereq;
+    int visiting = 0;
+    
+    bool dfs () {
+        for (CCourse* next : prereq) {
+            if (next->visiting == 1)
+                return false;
+            next->visiting = 1;
+            if (next->dfs() == false)
+                return false;
+            next->visiting = 2;
+        }
+        
+        return true;
+    }
+};
+
+
+class Solution {
+public:
+    
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        
+        vector<CCourse*> courses;
+        
+        for (int a=0; a<numCourses; ++a)
+            courses.push_back(new CCourse());
+        
+        for (vector<int> prereq : prerequisites) {
+            CCourse* pre_course = courses[prereq[1]];
+            CCourse* next_course = courses[prereq[0]];
+            next_course->prereq.insert(pre_course);
+        }
+        
+        for (int a=0; a<numCourses; ++a) {
+            if (courses[a]->visiting==2)
+                continue;
+            courses[a]->visiting = 1;
+            if (courses[a]->dfs() == false)
+                return false;
+            courses[a]->visiting = 2;
+        }
+        
+        return true;
+    }
+};
