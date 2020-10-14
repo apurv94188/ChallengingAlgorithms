@@ -1,3 +1,8 @@
+/*
+Leetcode: https://leetcode.com/problems/making-file-names-unique/
+Runtime: 276 ms, faster than 91.62% of C++ online submissions for Making File Names Unique.
+Memory Usage: 62.5 MB, less than 54.47% of C++ online submissions for Making File Names Unique.
+*/
 class Solution {
 public:
     unordered_set<string> reserved; // actual names (system assigned) will get added to this as we move loop through the vector of names
