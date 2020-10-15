@@ -1,34 +1,46 @@
+/*
+LeetCode: https://leetcode.com/problems/can-convert-string-in-k-moves/
+Runtime: 60 ms, faster than 98.64% of C++ online submissions for Can Convert String in K Moves.
+Memory Usage: 17.9 MB, less than 5.26% of C++ online submissions for Can Convert String in K Moves.
+*/
 class Solution {
 public:
     
-    inline int get_distance(char a, char b) {
-        if (a<=b)
-            return b-a;
-        return 26-(a-'a'+1)+(b-'a'+1);  // example a='g' and b='d'
+    // gives min moves required to convert s into t
+    inline int get_req_move(char s, char t) {
+        
+        if (s <= t)
+            return t-s; // s->t
+        
+        // s->'z' 'z'->'a' 'a'->t
+        return 'z'-s + 1 + t-'a';
     }
     
     bool canConvertString(string s, string t, int k) {
+        
         if (s.size() != t.size())
             return false;
-        if (s == "")
-            return true;
         
-        vector<int> ik (26, 0);
+        // can be atmost 26 moves. Next number of moves required to satisfy this move. Each time this move is required, it will increase by 26
+        vector<int> move;
+        for (int i=0; i<27; ++i) move.push_back(i);
+        int req_move;
         
-        int distance;
-        
-        for (int i=0; i<s.size(); ++i) {
-            distance = get_distance(s[i], t[i]);
-            if (distance==0)
+        for(int j=0; j<s.size(); ++j) {
+            
+            req_move = get_req_move(s[j], t[j]);
+            //cout << move[req_move] << " ";
+            if (req_move == 0) // char are same
                 continue;
             
-            // ik[distance] tells that how many 26 char shifting previous char, having same distance, had to make.
-            // soo this char will have to make 1 more time 26 char shifting + the distance.
-            if (ik[distance]*26+distance > k)
+            if (move[req_move] > k) // move required >k
                 return false;
             
-            ++ik[distance];
-        }
+            move[req_move] += 26; //increase the move required next time by 26.
+            
+            
+        } // for j
+        
         
         return true;
     }
